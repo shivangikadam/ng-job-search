@@ -1,0 +1,18 @@
+.job-header {
+  display: flex;
+}
+
+.compnayimg {
+  align-content: center;
+  margin: 0px 10px 10px 0px;
+}
+
+.companyName {
+  font-size: 1.2rem;
+}
+
+.job-details-container {
+  padding: 10px;
+  background-color: #ebeff5;
+  color: black;
+}

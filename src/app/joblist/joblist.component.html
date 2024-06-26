@@ -1,0 +1,34 @@
+<div class="joblistpage">
+  <div class="containerbuttons">
+    <button (click)="showAllJobs()" style="width: 50%">All Jobs</button>
+    <button (click)="showFavoriteJobs()" style="width: 50%">Favorites</button>
+  </div>
+  <div class="container" *ngFor="let job of filteredJobs">
+    <div class="compnayimg">
+      <img
+        [src]="job.companyLogo"
+        alt="{{ job.companyName }} logo"
+        width="50"
+      />
+    </div>
+    <div class="jodetails">
+      <div class="title">
+        <a (click)="goToJobDetails(job.id)">{{ job.title }}</a>
+      </div>
+      <div class="companydetails">
+        Company: {{ job.companyName }} Reference: {{ job.reference }}
+      </div>
+    </div>
+    <div class="favourite" *ngIf="!showFavorites">
+      <button (click)="toggleFavorite(job)">
+        <span [ngClass]="{ favorite: job.favorite }">★</span>
+      </button>
+    </div>
+  </div>
+  <div
+    *ngIf="showFavorites && filteredJobs.length === 0"
+    style="text-align: center; font-weight: 500"
+  >
+    No favorites jobs found.
+  </div>
+</div>
