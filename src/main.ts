@@ -1,10 +1,25 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
-import {setupWorker} from 'msw/browser';
+import { provideRouter } from '@angular/router';
+import { routes } from './app/app.routes';
+import { provideHttpClient } from '@angular/common/http';
+import { setupWorker } from 'msw/browser';
 import { mockHandlers } from './mocks';
 
-setupWorker(...mockHandlers).start()
-  .then(() => bootstrapApplication(AppComponent, appConfig))
-  .catch((err) => console.error(err));
+console.log('Setting up Mock Service Worker...');
 
+const appConfig = {
+  providers: [provideRouter(routes), provideHttpClient()],
+};
+
+setupWorker(...mockHandlers)
+  .start()
+  .then(() => {
+    console.log('Mock Service Worker started.');
+    bootstrapApplication(AppComponent, appConfig)
+      .then(() => console.log('Angular application bootstrapped.'))
+      .catch((err) =>
+        console.error('Failed to bootstrap Angular application:', err)
+      );
+  })
+  .catch((err) => console.error('Failed to start mock service worker:', err));

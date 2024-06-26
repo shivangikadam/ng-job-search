@@ -1,0 +1,46 @@
+.joblist {
+  background-color: white;
+}
+
+.container {
+  display: flex;
+  padding: 10px;
+  background-color: #ebeff5;
+  color: black;
+}
+
+.compnayimg {
+  align-content: center;
+  margin: 10px;
+}
+
+.companyName {
+  font-size: 1.2rem;
+}
+
+.jodetails {
+  display: block;
+  flex-grow: 1;
+}
+
+.containerbuttons {
+  display: flex;
+  padding: 10px;
+  background-color: #ebeff5;
+  color: black;
+}
+
+.favorite {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.favorite.favorite {
+  color: yellow;
+}
+
+.joblistpage {
+  padding: 10px;
+  background-color: #ebeff5;
+  color: black;
+}
