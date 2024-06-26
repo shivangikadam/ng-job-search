@@ -25,7 +25,10 @@
       </button>
     </div>
   </div>
-  <div *ngIf="showFavorites && filteredJobs.length === 0">
+  <div
+    *ngIf="showFavorites && filteredJobs.length === 0"
+    style="text-align: center; font-weight: 500"
+  >
     No favorite jobs found.
   </div>
 </div>

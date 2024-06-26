@@ -21,7 +21,10 @@ export class JobListComponent implements OnInit {
   ngOnInit(): void {
     this.jobService.getJobs().subscribe({
       next: (data: Job[]) => {
-        this.jobs = data;
+        this.jobs = data.map((job) => ({
+          ...job,
+          favorite: this.getFavoriteStatus(job.id),
+        }));
         this.filteredJobs = [...this.jobs];
       },
       error: (err: any) => {
@@ -30,21 +33,37 @@ export class JobListComponent implements OnInit {
     });
   }
 
-  showAllJobs() {
+  toggleFavorite(job: Job): void {
+    job.favorite = !job.favorite;
+    this.setFavoriteStatus(job.id, job.favorite);
+    if (this.showFavorites) {
+      this.filteredJobs = this.jobs.filter((j) => j.favorite);
+    }
+  }
+
+  showAllJobs(): void {
     this.showFavorites = false;
     this.filteredJobs = [...this.jobs];
   }
 
-  showFavoriteJobs() {
+  showFavoriteJobs(): void {
     this.showFavorites = true;
     this.filteredJobs = this.jobs.filter((job) => job.favorite);
   }
 
-  toggleFavorite(job: Job) {
-    job.favorite = !job.favorite;
-    if (this.showFavorites) {
-      this.filteredJobs = this.jobs.filter((j) => j.favorite);
+  private getFavoriteStatus(jobId: number): boolean {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    return favorites.includes(jobId);
+  }
+
+  private setFavoriteStatus(jobId: number, status: boolean): void {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    if (status) {
+      favorites.push(jobId);
+    } else {
+      favorites = favorites.filter((id: number) => id !== jobId);
     }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
   }
 
   goToJobDetails(id: number): void {
