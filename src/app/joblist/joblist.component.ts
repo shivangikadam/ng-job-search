@@ -3,6 +3,7 @@ import { JobService } from '../service/jobservice.service';
 import { Job } from '../models/job.model';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-job-list',
@@ -16,7 +17,11 @@ export class JobListComponent implements OnInit {
   showFavorites: boolean = false;
   filteredJobs: Job[] = [];
 
-  constructor(private jobService: JobService, private router: Router) {}
+  constructor(
+    private jobService: JobService,
+    private router: Router,
+    private cookieService: CookieService
+  ) {}
 
   ngOnInit(): void {
     this.jobService.getJobs().subscribe({
@@ -52,18 +57,43 @@ export class JobListComponent implements OnInit {
   }
 
   private getFavoriteStatus(jobId: number): boolean {
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    return favorites.includes(jobId);
+    const favorites = this.cookieService.get('favorites');
+    if (favorites) {
+      try {
+        const favoriteArray = JSON.parse(favorites);
+        return Array.isArray(favoriteArray)
+          ? favoriteArray.includes(jobId)
+          : false;
+      } catch (e) {
+        console.error('Error parsing favorites cookie:', e);
+        return false;
+      }
+    }
+    return false;
   }
 
   private setFavoriteStatus(jobId: number, status: boolean): void {
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    if (status) {
-      favorites.push(jobId);
-    } else {
-      favorites = favorites.filter((id: number) => id !== jobId);
+    const favorites = this.cookieService.get('favorites');
+    let favoriteArray: number[] = [];
+    if (favorites) {
+      try {
+        favoriteArray = JSON.parse(favorites);
+        if (!Array.isArray(favoriteArray)) {
+          favoriteArray = [];
+        }
+      } catch (e) {
+        console.error('Error parsing favorites cookie:', e);
+        favoriteArray = [];
+      }
     }
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+    if (status) {
+      if (!favoriteArray.includes(jobId)) {
+        favoriteArray.push(jobId);
+      }
+    } else {
+      favoriteArray = favoriteArray.filter((id: number) => id !== jobId);
+    }
+    this.cookieService.set('favorites', JSON.stringify(favoriteArray));
   }
 
   goToJobDetails(id: number): void {
